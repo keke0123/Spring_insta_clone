@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.instaclone.project.upload.dto.UploadDto" alias="uploadDto"/>
+		<typeAlias type="com.instaclone.project.user.dto.UserDto" alias="userDto" />
+		<typeAlias type="com.instaclone.project.user.dto.UserPasswordDto" alias="userPasswordDto" />
+		<typeAlias type="com.instaclone.project.user.dto.UserLoginDto" alias="userLoginDto"/>
+		<typeAlias type="com.instaclone.project.upload.dto.UploadDataDto" alias="uploadDataDto"/>
+		<typeAlias type="com.instaclone.project.search.dto.SearchDto" alias="searchDto"/>
+		<typeAlias type="com.instaclone.project.search.dto.SearchFollowDto" alias="searchFollowDto"/>
+		<typeAlias type="com.instaclone.project.main.dto.MainDto" alias="mainDto"/>
+		<typeAlias type="com.instaclone.project.profile.dto.ProfileDto" alias="profileDto"/>
+		<typeAlias type="com.instaclone.project.profile.dto.ProfileBoardDto" alias="profileBoardDto"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="com/instaclone/project/mybatis/TestMapper.xml"/>
+		<mapper resource="com/instaclone/project/mybatis/UploadMapper.xml"/>
+		<mapper resource="com/instaclone/project/mybatis/UserMapper.xml"/>
+		<mapper resource="com/instaclone/project/mybatis/SearchMapper.xml"/>
+		<mapper resource="com/instaclone/project/mybatis/MainMapper.xml"/>
+		<mapper resource="com/instaclone/project/mybatis/ProfileMapper.xml"/>
+	</mappers>
+	
+</configuration>
+
+
+
+
+
+
+
+
+

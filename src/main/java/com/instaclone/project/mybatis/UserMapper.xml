@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+	<insert id="insertUserData" parameterType="userDto">
+		INSERT INTO instaclone_user(id, password, email)
+		VALUES(#{id}, #{password}, #{email})
+	</insert>
+	<select id="selectUserId" parameterType="userDto" resultType="string">
+		SELECT id
+		FROM instaclone_user
+		WHERE id=#{id}
+	</select>
+	<select id="selectPassword" parameterType="userDto" resultType="string">
+		SELECT password
+		FROM instaclone_user
+		WHERE id=#{id}
+	</select>
+	<select id="selectEmail" parameterType="userDto" resultType="string">
+		SELECT email
+		FROM instaclone_user
+		WHERE email=#{email}
+	</select>
+	<insert id="insertPasswordDto" parameterType="userPasswordDto">
+		INSERT INTO instaclone_change_password(email, ableTime, passNum)
+		VALUES(#{email}, #{ableTime}, #{passNum})
+	</insert>
+	<select id="selectAbleTime" parameterType="userPasswordDto" resultType="string">
+		SELECT email
+		FROM instaclone_change_password
+		WHERE passNum=#{passNum} AND ableTime > #{ableTime}
+	</select>
+	<update id="updatePassword" parameterType="userDto">
+		UPDATE instaclone_user
+		SET password=#{password}
+		WHERE email=#{email}
+	</update>
+	<insert id="insertLoginData" parameterType="userLoginDto">
+		INSERT INTO instaclone_login_data(id, token, ableTime)
+		VALUES(#{id}, #{token}, #{ableTime})
+	</insert>
+	<select id="selectLoginData" parameterType="userLoginDto" resultType="string">
+		SELECT id
+		FROM instaclone_login_data
+		WHERE id=#{id} AND token=#{token} AND ableTime > #{ableTime}
+	</select>
+</mapper>

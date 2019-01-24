@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="upload">
+	<select id="getSequence" resultType="int">
+		SELECT instaclone_img_seq.NEXTVAL
+		FROM DUAL
+	</select>
+	<insert id="insertImgBase64" parameterType="uploadDto" >
+		INSERT INTO instaclone_img(id, savePath)
+		VALUES(#{num}, #{savePath})
+	</insert>
+	<select id="getBoardSequence" resultType="int">
+		SELECT instaclone_board_seq.NEXTVAL
+		FROM DUAL
+	</select>
+	<insert id="insertBoardData" parameterType="uploadDataDto">
+		INSERT INTO instaclone_board(board_num, writer, content, regdate)
+		VALUES(#{board_num}, #{writer}, #{content}, SYSDATE)
+	</insert>
+	<insert id="insertImgData" parameterType="uploadDto">
+		INSERT INTO instaclone_board_img(board_num, path)
+		VALUES(#{board_num}, #{savePath})
+	</insert>
+	<insert id="insertTagData" parameterType="uploadDto">
+		INSERT INTO instaclone_board_tag(board_num, tag)
+		VALUES(#{board_num}, #{tag})
+	</insert>
+</mapper>

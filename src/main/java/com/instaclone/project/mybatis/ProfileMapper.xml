@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="profile">
+	<select id="selectProfile" parameterType="profileDto" resultType="profileDto">
+		SELECT thumbnail, count_follow, count_follower, count_board
+		FROM(
+			SELECT count(follow) AS count_follow 
+			FROM instaclone_user_follow
+			WHERE follower=#{id}
+		), (
+			SELECT count(follower) AS count_follower
+			FROM instaclone_user_follow
+			WHERE follow=#{id}
+		), (
+			SELECT count(board_num) AS count_board
+			FROM instaclone_board
+			WHERE writer=#{id}
+		), (
+			SELECT thumbnail
+			FROM instaclone_user
+			WHERE id=#{id}
+		)
+	</select>
+	<select id="selectBoard" parameterType="profileDto" resultType="profileBoardDto">
+		SELECT board_num, rNum
+		FROM (
+			SELECT board_num, ROWNUM AS rNum
+			FROM instaclone_board
+			WHERE writer=#{id}
+			ORDER BY regdate
+		)
+		WHERE rNum BETWEEN #{rNum} AND #{rNum}+3
+	</select>
+	<select id="selectImg" parameterType="profileBoardDto" resultType="string" >
+		SELECT path
+		FROM instaclone_board_img
+		WHERE board_num=#{board_num}
+	</select>
+</mapper>

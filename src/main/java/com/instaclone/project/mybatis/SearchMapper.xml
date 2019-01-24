@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="search">
+	<select id="selectFollow" parameterType="searchDto" resultType="searchDto">
+		SELECT b.id AS searchResult, a.count_follow, b.thumbnail
+		FROM (
+			SELECT follow, count(follow) AS count_follow
+			FROM instaclone_user_follow
+			GROUP BY follow
+		) a,(
+			SELECT id, thumbnail
+			FROM instaclone_user
+			<if test="search != null">
+				WHERE id LIKE '%'||#{search}||'%' 
+			</if>
+		) b
+		WHERE a.follow(+) = b.id
+		ORDER BY a.count_follow
+	</select>
+	<select id="selectLike" parameterType="searchDto" resultType="searchDto">
+		SELECT searchResult, thumbnail
+		FROM(
+			SELECT writer AS searchResult, count(writer)
+			FROM(
+				SELECT a.board_num, a.writer
+				FROM (
+					SELECT board_num, writer
+					FROM instaclone_board
+					<if test="search != null">
+						WHERE writer LIKE '%'||#{search}||'%' 
+					</if>
+				) a, (
+					SELECT board_num
+					FROM instaclone_board_like
+				) b
+				WHERE a.board_num = b.board_num(+)
+			)
+			GROUP BY writer
+			ORDER BY count(writer)
+		),(
+			SELECT id, thumbnail
+			FROM instaclone_user
+			<if test="search != null">
+				WHERE id LIKE '%'||#{search}||'%' 
+			</if>
+		)
+		WHERE id = searchResult
+		
+	</select>
+	<select id="selectTag" parameterType="searchDto" resultType="searchDto">
+		SELECT writer AS searchResult, count(writer)
+		FROM (
+			SELECT a.board_num, a.writer
+			FROM (
+				SELECT board_num, writer
+				FROM instaclone_board
+			) a, (
+				SELECT board_num
+				FROM instaclone_board_tag
+				<if test="search != null">
+					WHERE tag LIKE '%'||#{search}||'%' 
+				</if>
+			) b, (
+				SELECT id, thumbnail
+				FROM instaclone_user
+			) c
+			WHERE a.board_num = b.board_num AND a.writer=c.id
+		)
+		GROUP BY writer
+		ORDER BY count(writer)
+	</select>
+	<select id="selectIsFollow" parameterType="searchFollowDto" resultType="string">
+		SELECT follower
+		FROM instaclone_user_follow
+		WHERE follower=#{myId} AND follow=#{id}
+	</select>
+	<insert id="insertFollow" parameterType="searchFollowDto">
+		INSERT INTO instaclone_user_follow(follow, follower)
+		VALUES(#{id}, #{myId})
+	</insert>
+	<delete id="deleteFollow" parameterType="searchFollowDto">
+		DELETE
+		FROM instaclone_user_follow
+		WHERE follower=#{myId} AND follow=#{id}
+	</delete>
+</mapper>

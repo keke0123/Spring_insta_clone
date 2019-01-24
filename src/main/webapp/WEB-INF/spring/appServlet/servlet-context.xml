@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<beans:bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<beans:property name="jndiName" value="java:comp/env/jdbc/myoracle"/>
+	</beans:bean>
+	<!-- SqlSessionFactory 객체 -->
+	<beans:bean id="sessionFactory" 
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource"/>
+		<beans:property name="configLocation"
+	value="classpath:com/instaclone/project/mybatis/Configuration.xml"/>
+	</beans:bean>
+	<!-- 
+		SqlSession 인터페이스를 구현한 SqlSessionTemplate(SqlSession) 객체 
+		Dao 가 의존하는 객체 
+	-->
+	<beans:bean class="org.mybatis.spring.SqlSessionTemplate">
+		<beans:constructor-arg name="sqlSessionFactory" 
+			ref="sessionFactory"/>
+	</beans:bean>
+	
+	<!-- 어노테이션 기반으로 aop 적용하기 위한 설정 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	
+	<!-- Multipart 폼 전송 처리를 위한 bean 설정 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10240000"/>
+	</beans:bean>
+	
+	<!-- bean 의 이름으로 view 를 찾아갈수 있도록 설정 -->
+	<beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="0"/>
+	</beans:bean>
+	
+	<!-- google Class Bean설정 추가 클라이언트ID와 보안비밀 세팅  -->
+	<beans:bean id="googleConnectionFactory"
+		class="org.springframework.social.google.connect.GoogleConnectionFactory">
+		<beans:constructor-arg value="573709546462-eug6m358l05j5pf2e7hlddjc26jfir3n.apps.googleusercontent.com" />
+		<beans:constructor-arg value="7S0ek7f0f8pJ3mGPHimiEFl3" />
+	</beans:bean>
+	<!--  승인된 자바스크립트 원본과 승인된 리디렉션 URI -->
+	<beans:bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
+		<beans:property name="scope" value="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" />
+		<beans:property name="redirectUri" value="http://localhost:8888/project/oauth2callback.do" />
+	</beans:bean>
+		<!--  승인된 자바스크립트 원본과 승인된 리디렉션 URI -->
+	<beans:bean id="googleOAuth2Parameters2" class="org.springframework.social.oauth2.OAuth2Parameters">
+		<beans:property name="scope" value="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" />
+		<beans:property name="redirectUri" value="http://localhost:8888/project/oauth2callback2.do" />
+	</beans:bean>
+	
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.instaclone.project" />
+	<context:component-scan base-package="com.instaclone.project.upload.*" />
+	<!-- 회원정보 관련 동작 -->
+	<context:component-scan base-package="com.instaclone.project.user.*" />
+	<!-- 검색 관련 동작 -->
+	<context:component-scan base-package="com.instaclone.project.search.*"/>
+	<context:component-scan base-package="com.instaclone.project.main.*"></context:component-scan>
+	<!-- profile 관련 -->
+	<context:component-scan base-package="com.instaclone.project.profile.*"></context:component-scan>
+	<!-- Aop -->
+	<context:component-scan base-package="com.instaclone.project.aspect.*"></context:component-scan>
+	
+	
+
+	
+</beans:beans>

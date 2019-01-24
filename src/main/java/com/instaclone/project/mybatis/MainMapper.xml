@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="main">
+	<select id="selectBoard" parameterType="mainDto" resultType="mainDto">
+		SELECT board_num, writer, content, regdate, rNum
+		FROM (
+			SELECT board_num, writer, content, regdate, ROWNUM AS rNum
+			FROM (
+			    SELECT follow
+			    FROM instaclone_user_follow
+			    WHERE follower=#{id}
+			) f, (
+			    SELECT board_num, writer, content, regdate
+			    FROM instaclone_board
+			    
+			) b
+			WHERE follow=writer
+			ORDER BY regdate
+		)
+		WHERE rNum BETWEEN #{rNum} AND #{rNum}+3
+		
+	</select>
+	<select id="selectBoardOther" parameterType="mainDto" resultType="mainDto">
+		SELECT count_like, isLike, count_comment, thumbnail
+		FROM( 
+			SELECT nvl(count(board_num),0) AS count_like
+			FROM instaclone_board_like
+			WHERE board_num=#{board_num}
+		), (
+			SELECT id AS isLike
+			FROM instaclone_board_like
+			WHERE id=#{id} AND board_num=#{board_num}
+		), (
+			SELECT nvl(count(board_num),0) AS count_comment
+			FROM instaclone_board_comment
+			WHERE board_num=#{board_num}
+		), (
+			SELECT thumbnail
+			FROM instaclone_user
+			WHERE id=#{writer}
+		)
+	</select>
+	<select id="selectImgList" parameterType="mainDto" resultType="string">
+		SELECT path
+		FROM instaclone_board_img
+		WHERE board_num=#{board_num}
+	</select>
+	<select id="selectTagList" parameterType="mainDto" resultType="string">
+		SELECT tag
+		FROM instaclone_board_tag
+		WHERE board_num=#{board_num}
+	</select>
+	<select id="selectIsLike" parameterType="mainDto" resultType="String">
+		SELECT id
+		FROM instaclone_board_like
+		WHERE board_num=#{board_num} AND id=#{id}
+	</select>
+	<insert id="insertLike" parameterType="mainDto">
+		INSERT INTO instaclone_board_like(board_num, id)
+		VALUES(#{board_num}, #{id})
+	</insert>
+	<delete id="deleteLike" parameterType="mainDto">
+		DELETE
+		FROM instaclone_board_like
+		WHERE board_num=#{board_num} AND id=#{id}
+	</delete>
+	<select id="selectComment" parameterType="mainDto" resultType="mainDto">
+		SELECT comment_num, comment_group_num, board_num, comment_writer, comment_content, target
+		FROM instaclone_board_comment
+		WHERE board_num=#{board_num}
+	</select>
+	<insert id="insertComment" parameterType="MainDto">
+		INSERT INTO instaclone_board_comment
+		(comment_num, comment_group_num, board_num, comment_writer, comment_content, target)
+		VALUES(#{comment_num}, #{comment_group_num}, #{board_num}, #{comment_writer}, #{comment_content}, #{target})
+	</insert>
+	<select id="getSequence" resultType="int">
+		SELECT instaclone_board_comment_seq.NEXTVAL
+		FROM DUAL
+	</select>
+</mapper>
